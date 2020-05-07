@@ -9,8 +9,7 @@ use PhilKra\Helper\Encoding;
  * EventBean for occurring events such as Exceptions or Transactions
  *
  */
-class EventBean
-{
+class EventBean {
     /**
      * Bit Size of ID's
      */
@@ -85,8 +84,7 @@ class EventBean
      * @param array $contexts
      * @param ?Transaction $parent
      */
-    public function __construct(array $contexts, ?Transaction $parent = null)
-    {
+    public function __construct(array $contexts, Transaction $parent = null) {
         // Generate Random Event Id
         $this->id = self::generateRandomBitsInHex(self::EVENT_ID_BITS);
 
@@ -107,38 +105,34 @@ class EventBean
      *
      * @return string
      */
-    public function getId() : string
-    {
+    public function getId() {
         return $this->id;
     }
 
     /**
      * Get the Trace Id
      *
-     * @return string $traceId
+     * @return $traceId
      */
-    public function getTraceId() : ?string
-    {
+    public function getTraceId() {
         return $this->traceId;
     }
 
     /**
      * Set the Trace Id
      *
-     * @param string $traceId
+     * @param $traceId
      */
-    final public function setTraceId(string $traceId)
-    {
+    final public function setTraceId($traceId) {
         $this->traceId = $traceId;
     }
 
     /**
      * Set the Parent Id
      *
-     * @param string $parentId
+     * @param $parentId
      */
-    final public function setParentId(string $parentId)
-    {
+    final public function setParentId($parentId) {
         $this->parentId = $parentId;
     }
 
@@ -147,8 +141,7 @@ class EventBean
      *
      * @return string
      */
-    final public function getParentId() : ?string
-    {
+    final public function getParentId() {
         return $this->parentId;
     }
 
@@ -157,8 +150,7 @@ class EventBean
      *
      * @return int
      */
-    final public function getParentTimestampOffset(): ?int
-    {
+    final public function getParentTimestampOffset() {
         return $this->parentTimestampOffset;
     }
 
@@ -167,8 +159,7 @@ class EventBean
      *
      * @return int
      */
-    public function getTimestamp() : int
-    {
+    public function getTimestamp() {
         return $this->timestamp;
     }
 
@@ -179,8 +170,7 @@ class EventBean
      *
      * @param EventBean $parent
      */
-    public function setParent(EventBean $parent)
-    {
+    public function setParent(EventBean $parent){
         $this->setParentId($parent->getId());
         $this->setTraceId($parent->getTraceId());
     }
@@ -192,8 +182,7 @@ class EventBean
      *
      * @return void
      */
-    final public function setMeta(array $meta)
-    {
+    final public function setMeta(array $meta) {
         $this->meta = array_merge($this->meta, $meta);
     }
 
@@ -202,8 +191,7 @@ class EventBean
      *
      * @param array $userContext
      */
-    final public function setUserContext(array $userContext)
-    {
+    final public function setUserContext(array $userContext) {
         $this->contexts['user'] = array_merge($this->contexts['user'], $userContext);
     }
 
@@ -212,8 +200,7 @@ class EventBean
      *
      * @param array $customContext
      */
-    final public function setCustomContext(array $customContext)
-    {
+    final public function setCustomContext(array $customContext) {
         $this->contexts['custom'] = array_merge($this->contexts['custom'], $customContext);
     }
 
@@ -222,8 +209,7 @@ class EventBean
      *
      * @param array $response
      */
-    final public function setResponse(array $response)
-    {
+    final public function setResponse(array $response) {
         $this->contexts['response'] = array_merge($this->contexts['response'], $response);
     }
 
@@ -232,8 +218,7 @@ class EventBean
      *
      * @param array $tags
      */
-    final public function setTags(array $tags)
-    {
+    final public function setTags(array $tags) {
         $this->contexts['tags'] = array_merge($this->contexts['tags'], $tags);
     }
 
@@ -242,8 +227,7 @@ class EventBean
      *
      * @param array $request
      */
-    final public function setRequest(array $request)
-    {
+    final public function setRequest(array $request) {
         $this->contexts['request'] = array_merge($this->contexts['request'], $request);
     }
 
@@ -252,21 +236,20 @@ class EventBean
      *
      * @return array
      */
-    final public function generateRequest(): array
-    {
+    final public function generateRequest() {
         $headers = getallheaders();
         $http_or_https = isset($_SERVER['HTTPS']) ? 'https' : 'http';
 
         // Build Context Stub
-        $SERVER_PROTOCOL = $_SERVER['SERVER_PROTOCOL'] ?? '';
-        $remote_address = $_SERVER['REMOTE_ADDR'] ?? '';
+        $SERVER_PROTOCOL = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : '');
+        $remote_address = (isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '');
         if (array_key_exists('HTTP_X_FORWARDED_FOR', $_SERVER) === true) {
             $remote_address = $_SERVER['HTTP_X_FORWARDED_FOR'];
         }
 
         return [
             'http_version' => substr($SERVER_PROTOCOL, strpos($SERVER_PROTOCOL, '/')),
-            'method'       => $_SERVER['REQUEST_METHOD'] ?? 'cli',
+            'method'       => (isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : 'cli'),
             'socket'       => [
                 'remote_address' => $remote_address,
                 'encrypted'      => isset($_SERVER['HTTPS'])
@@ -274,15 +257,15 @@ class EventBean
             'response' => $this->contexts['response'],
             'url'          => [
                 'protocol' => $http_or_https,
-                'hostname' => Encoding::keywordField($_SERVER['SERVER_NAME'] ?? ''),
-                'port'     => $_SERVER['SERVER_PORT'] ?? null,
-                'pathname' => Encoding::keywordField($_SERVER['SCRIPT_NAME'] ?? ''),
-                'search'   => Encoding::keywordField('?' . (($_SERVER['QUERY_STRING'] ?? '') ?? '')),
+                'hostname' => Encoding::keywordField((isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME']: '')),
+                'port'     => (isset($_SERVER['SERVER_PORT'] )? $_SERVER['SERVER_PORT']  : null),
+                'pathname' => Encoding::keywordField((isset($_SERVER['SCRIPT_NAME']) ? $_SERVER['SCRIPT_NAME'] : '')),
+                'search'   => Encoding::keywordField('?' . ((isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '') ?: '')),
                 'full' => Encoding::keywordField(isset($_SERVER['HTTP_HOST']) ? $http_or_https . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] : ''),
             ],
             'headers' => [
-                'user-agent' => $headers['User-Agent'] ?? '',
-                'cookie'     => $this->getCookieHeader($headers['Cookie'] ?? ''),
+                'user-agent' => (isset($headers['User-Agent']) ? $headers['User-Agent']: ''),
+                'cookie'     => $this->getCookieHeader((isset($headers['Cookie']) ? $headers['Cookie'] : '')),
             ],
             'env' => (object)$this->getEnv(),
             'cookies' => (object)$this->getCookies(),
@@ -292,13 +275,12 @@ class EventBean
     /**
      * Generate random bits in hexadecimal representation
      *
-     * @param int $bits
+     * @param $bits
      * @return string
      * @throws \Exception
      */
-    final protected function generateRandomBitsInHex(int $bits): string
-    {
-        return bin2hex(random_bytes($bits/8));
+    final protected function generateRandomBitsInHex($bits) {
+        return bin2hex(openssl_random_pseudo_bytes($bits));
     }
 
     /**
@@ -306,8 +288,7 @@ class EventBean
      *
      * @return string
      */
-    final protected function getMetaType() : string
-    {
+    final protected function getMetaType() {
         return $this->meta['type'];
     }
 
@@ -316,8 +297,7 @@ class EventBean
      *
      * @return string
      */
-    final protected function getMetaResult() : string
-    {
+    final protected function getMetaResult() {
         return (string)$this->meta['result'];
     }
 
@@ -330,8 +310,7 @@ class EventBean
      *
      * @return array
      */
-    final protected function getEnv() : array
-    {
+    final protected function getEnv() {
         $envMask = $this->contexts['env'];
         $env = empty($envMask)
             ? $_SERVER
@@ -348,9 +327,8 @@ class EventBean
      *
      * @return array
      */
-    final protected function getCookies() : array
-    {
-        $cookieMask = $this->contexts['cookies'] ?? [];
+    final protected function getCookies() {
+        $cookieMask = (isset($this->contexts['cookies']) ? $this->contexts['cookies']: []);
         return empty($cookieMask)
             ? $_COOKIE
             : array_intersect_key($_COOKIE, array_flip($cookieMask));
@@ -363,9 +341,8 @@ class EventBean
      *
      * @return string
      */
-    final protected function getCookieHeader(string $cookieHeader) : string
-    {
-        $cookieMask = $this->contexts['cookies'] ?? [];
+    final protected function getCookieHeader($cookieHeader) {
+        $cookieMask = (isset($this->contexts['cookies']) ? $this->contexts['cookies']: []);
 
         // Returns an empty string if cookies are masked.
         return empty($cookieMask) ? $cookieHeader : '';
@@ -378,8 +355,7 @@ class EventBean
      *
      * @return array
      */
-    final protected function getContext() : array
-    {
+    final protected function getContext() {
         $context = [
             'request' => empty($this->contexts['request']) ? $this->generateRequest() : $this->contexts['request']
         ];

@@ -9,8 +9,7 @@ use PhilKra\Events\EventBean;
  * Registry for captured the Events
  *
  */
-class Store implements \JsonSerializable
-{
+class Store implements \JsonSerializable {
     /**
      * Set of Events
      *
@@ -23,8 +22,7 @@ class Store implements \JsonSerializable
      *
      * @return array of \PhilKra\Events\EventBean
      */
-    public function list() : array
-    {
+    public function toList() {
         return $this->store;
     }
 
@@ -33,8 +31,7 @@ class Store implements \JsonSerializable
      *
      * @return bool
      */
-    public function isEmpty() : bool
-    {
+    public function isEmpty() {
         return empty($this->store);
     }
 
@@ -53,8 +50,7 @@ class Store implements \JsonSerializable
      *
      * @return array
      */
-    public function jsonSerialize() : array
-    {
+    public function jsonSerialize() {
         return $this->store;
     }
 }

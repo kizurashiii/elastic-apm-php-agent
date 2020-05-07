@@ -10,8 +10,7 @@ use PhilKra\Exception\Transaction\DuplicateTransactionNameException;
  * Store for the Transaction Events
  *
  */
-class TransactionsStore extends Store
-{
+class TransactionsStore extends Store {
     /**
      * Register a Transaction
      *
@@ -21,8 +20,7 @@ class TransactionsStore extends Store
      *
      * @return void
      */
-    public function register(Transaction $transaction)
-    {
+    public function register(Transaction $transaction) {
         $name = $transaction->getTransactionName();
 
         // Do not override the
@@ -37,13 +35,12 @@ class TransactionsStore extends Store
     /**
      * Fetch a Transaction from the Store
      *
-     * @param final string $name
+     * @param final $name
      *
      * @return mixed: \PhilKra\Events\Transaction | null
      */
-    public function fetch(string $name)
-    {
-        return $this->store[$name] ?? null;
+    public function fetch($name){
+        return (isset($this->store[$name]) ? $this->store[$name] : null);
     }
 
     /**
@@ -51,8 +48,7 @@ class TransactionsStore extends Store
      *
      * @return array
      */
-    public function jsonSerialize() : array
-    {
+    public function jsonSerialize() {
         return array_values($this->store);
     }
 }

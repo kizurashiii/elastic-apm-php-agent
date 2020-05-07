@@ -13,8 +13,7 @@ use PhilKra\Helper\Encoding;
  * @link https://www.elastic.co/guide/en/apm/server/7.3/metadata-api.html
  *
  */
-class Metadata extends EventBean implements \JsonSerializable
-{
+class Metadata extends EventBean implements \JsonSerializable {
 
     /**
      * @var Config
@@ -25,8 +24,7 @@ class Metadata extends EventBean implements \JsonSerializable
      * @param array $contexts
      * @param Config $config
      */
-    public function __construct(array $contexts, Config $config)
-    {
+    public function __construct(array $contexts, Config $config) {
         parent::__construct($contexts);
         $this->config = $config;
     }
@@ -36,16 +34,15 @@ class Metadata extends EventBean implements \JsonSerializable
      *
      * @return array
      */
-    final public function jsonSerialize(): array
-    {
+    final public function jsonSerialize() {
         return [
             'metadata' => [
                 'service' => [
                     'name'    => Encoding::keywordField($this->config->get('appName')),
                     'version' => Encoding::keywordField($this->config->get('appVersion')),
                     'framework' => [
-                        'name' => $this->config->get('framework') ?? '',
-                        'version' => $this->config->get('frameworkVersion') ?? '',
+                        'name' => $this->config->get('framework') ?: '',
+                        'version' => $this->config->get('frameworkVersion') ?: '',
                     ],
                     'language' => [
                         'name'    => 'php',

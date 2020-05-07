@@ -13,8 +13,7 @@ use PhilKra\Traits\Events\Stacktrace;
  * @link https://www.elastic.co/guide/en/apm/server/master/span-api.html
  *
  */
-class Span extends TraceableEvent implements \JsonSerializable
-{
+class Span extends TraceableEvent implements \JsonSerializable {
     use Stacktrace;
 
     /**
@@ -48,11 +47,10 @@ class Span extends TraceableEvent implements \JsonSerializable
     private $stacktrace = [];
 
     /**
-     * @param string $name
+     * @param $name
      * @param EventBean $parent
      */
-    public function __construct(string $name, EventBean $parent)
-    {
+    public function __construct($name, EventBean $parent) {
         parent::__construct([]);
         $this->name  = trim($name);
         $this->timer = new Timer();
@@ -64,8 +62,7 @@ class Span extends TraceableEvent implements \JsonSerializable
      *
      * @return void
      */
-    public function start()
-    {
+    public function start() {
         $this->timer->start();
     }
 
@@ -76,10 +73,9 @@ class Span extends TraceableEvent implements \JsonSerializable
      *
      * @return void
      */
-    public function stop(int $duration = null)
-    {
+    public function stop($duration = null) {
         $this->timer->stop();
-        $this->duration = $duration ?? round($this->timer->getDurationInMilliseconds(), 3);
+        $this->duration = $duration ?: round($this->timer->getDurationInMilliseconds(), 3);
     }
 
     /**
@@ -87,28 +83,25 @@ class Span extends TraceableEvent implements \JsonSerializable
     *
     * @return string
     */
-    public function getName() : string
-    {
+    public function getName() {
         return $this->name;
     }
 
     /**
      * Set the Span's Type
      *
-     * @param string $action
+     * @param $action
      */
-    public function setAction(string $action)
-    {
+    public function setAction($action) {
         $this->action = trim($action);
     }
 
     /**
      * Set the Spans' Action
      *
-     * @param string $type
+     * @param $type
      */
-    public function setType(string $type)
-    {
+    public function setType($type) {
         $this->type = trim($type);
     }
 
@@ -119,8 +112,7 @@ class Span extends TraceableEvent implements \JsonSerializable
      *
      * @param array $stacktrace
      */
-    public function setStacktrace(array $stacktrace)
-    {
+    public function setStacktrace(array $stacktrace) {
         $this->stacktrace = $stacktrace;
     }
 
@@ -131,8 +123,7 @@ class Span extends TraceableEvent implements \JsonSerializable
      *
      * @return array
      */
-    public function jsonSerialize() : array
-    {
+    public function jsonSerialize() {
         return [
             'span' => [
                 'id'             => $this->getId(),

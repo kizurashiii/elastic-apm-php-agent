@@ -96,12 +96,12 @@ class Agent
         $this->config = new Config($config);
 
         // Use the custom event factory or create a default one
-        $this->eventFactory = $eventFactory ?? new DefaultEventFactory();
+        $this->eventFactory = $eventFactory ?: new DefaultEventFactory();
 
         // Init the Shared Context
-        $this->sharedContext['user']   = $sharedContext['user'] ?? [];
-        $this->sharedContext['custom'] = $sharedContext['custom'] ?? [];
-        $this->sharedContext['tags']   = $sharedContext['tags'] ?? [];
+        $this->sharedContext['user']   = (isset($sharedContext['user']) ? $sharedContext['user'] : []);
+        $this->sharedContext['custom'] = (isset($sharedContext['custom']) ? $sharedContext['custom'] : []);
+        $this->sharedContext['tags']   = (isset($sharedContext['tags']) ? $sharedContext['tags'] : []);
 
         // Let's misuse the context to pass the environment variable and cookies
         // config to the EventBeans and the getContext method
@@ -111,7 +111,7 @@ class Agent
         $this->sharedContext['cookies'] = $this->config->get('cookies', []);
 
         // Initialize Event Stores
-        $this->transactionsStore = $transactionsStore ?? new TransactionsStore();
+        $this->transactionsStore = $transactionsStore ?: new TransactionsStore();
 
         // Init the Transport "Layer"
         $this->connector = new Connector($this->config);
@@ -127,20 +127,19 @@ class Agent
      *
      * @return EventFactoryInterface
      */
-    public function factory() : EventFactoryInterface
-    {
+    public function factory() {
         return $this->eventFactory;
     }
+
 
     /**
      * Query the Info endpoint of the APM Server
      *
      * @link https://www.elastic.co/guide/en/apm/server/7.3/server-info.html
      *
-     * @return Response
+     * @return \Psr\Http\Message\ResponseInterface
      */
-    public function info() : \GuzzleHttp\Psr7\Response
-    {
+    public function info() {
         return $this->connector->getInfo();
     }
 
@@ -149,12 +148,12 @@ class Agent
      *
      * @throws \PhilKra\Exception\Transaction\DuplicateTransactionNameException
      *
-     * @param string $name
+     * @param $name
      * @param array  $context
      *
      * @return Transaction
      */
-    public function startTransaction(string $name, array $context = [], float $start = null): Transaction
+    public function startTransaction($name, array $context = [], $start = null)
     {
         // Create and Store Transaction
         $this->transactionsStore->register(
@@ -176,12 +175,12 @@ class Agent
      *
      * @throws \PhilKra\Exception\Transaction\UnknownTransactionException
      *
-     * @param string $name
+     * @param $name
      * @param array $meta, Def: []
      *
      * @return void
      */
-    public function stopTransaction(string $name, array $meta = [])
+    public function stopTransaction($name, array $meta = [])
     {
         $this->getTransaction($name)->setBacktraceLimit($this->config->get('backtraceLimit', 0));
         $this->getTransaction($name)->stop();
@@ -193,12 +192,11 @@ class Agent
      *
      * @throws \PhilKra\Exception\Transaction\UnknownTransactionException
      *
-     * @param string $name
+     * @param $name
      *
      * @return Transaction
      */
-    public function getTransaction(string $name)
-    {
+    public function getTransaction($name) {
         $transaction = $this->transactionsStore->fetch($name);
         if ($transaction === null) {
             throw new UnknownTransactionException($name);
@@ -212,22 +210,20 @@ class Agent
      *
      * @link http://php.net/manual/en/class.throwable.php
      *
-     * @param \Throwable  $thrown
+     * @param \Exception  $thrown
      * @param array       $context, Def: []
      * @param Transaction $parent, Def: null
      *
      * @return void
      */
-    public function captureThrowable(\Throwable $thrown, array $context = [], ?Transaction $parent = null)
-    {
+    public function captureThrowable(\Exception $thrown, array $context = [], Transaction $parent = null) {
         $this->putEvent($this->factory()->newError($thrown, array_replace_recursive($this->sharedContext, $context), $parent));
     }
 
     /**
      * Put an Event to the Events Pool
      */
-    public function putEvent(EventBean $event)
-    {
+    public function putEvent(EventBean $event) {
         $this->connector->putEvent($event);
     }
 
@@ -236,8 +232,7 @@ class Agent
      *
      * @return \PhilKra\Helper\Config
      */
-    public function getConfig() : \PhilKra\Helper\Config
-    {
+    public function getConfig() {
         return $this->config;
     }
 
@@ -249,8 +244,7 @@ class Agent
      *
      * @return bool
      */
-    public function send() : bool
-    {
+    public function send() {
         // Is the Agent enabled ?
         if ($this->config->get('active') === false) {
             $this->transactionsStore->reset();
@@ -264,7 +258,7 @@ class Agent
         }
 
         // Start Payload commitment
-        foreach($this->transactionsStore->list() as $event) {
+        foreach($this->transactionsStore->toList() as $event) {
             $this->connector->putEvent($event);
         }
         $this->transactionsStore->reset();

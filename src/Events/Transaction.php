@@ -45,11 +45,10 @@ class Transaction extends TraceableEvent implements \JsonSerializable
     /**
     * Create the Transaction
     *
-    * @param string $name
+    * @param $name
     * @param array $contexts
     */
-    public function __construct(string $name, array $contexts, $start = null)
-    {
+    public function __construct($name, array $contexts, $start = null) {
         parent::__construct($contexts);
         $this->setTransactionName($name);
         $this->timer = new Timer($start);
@@ -60,8 +59,7 @@ class Transaction extends TraceableEvent implements \JsonSerializable
     *
     * @return void
     */
-    public function start()
-    {
+    public function start() {
         $this->timer->start();
     }
 
@@ -72,13 +70,12 @@ class Transaction extends TraceableEvent implements \JsonSerializable
      *
      * @return void
      */
-    public function stop(int $duration = null)
-    {
+    public function stop($duration = null) {
         // Stop the Timer
         $this->timer->stop();
 
         // Store Summary
-        $this->summary['duration']  = $duration ?? round($this->timer->getDurationInMilliseconds(), 3);
+        $this->summary['duration']  = $duration ?: round($this->timer->getDurationInMilliseconds(), 3);
         $this->summary['headers']   = (function_exists('xdebug_get_headers') === true) ? xdebug_get_headers() : [];
         $this->summary['backtrace'] = debug_backtrace($this->backtraceLimit);
     }
@@ -86,12 +83,11 @@ class Transaction extends TraceableEvent implements \JsonSerializable
     /**
     * Set the Transaction Name
     *
-    * @param string $name
+    * @param $name
     *
     * @return void
     */
-    public function setTransactionName(string $name)
-    {
+    public function setTransactionName($name) {
         $this->name = $name;
     }
 
@@ -100,8 +96,7 @@ class Transaction extends TraceableEvent implements \JsonSerializable
     *
     * @return string
     */
-    public function getTransactionName() : string
-    {
+    public function getTransactionName() {
         return $this->name;
     }
 
@@ -110,8 +105,7 @@ class Transaction extends TraceableEvent implements \JsonSerializable
     *
     * @return array
     */
-    public function getSummary() : array
-    {
+    public function getSummary() {
         return $this->summary;
     }
 
@@ -121,10 +115,9 @@ class Transaction extends TraceableEvent implements \JsonSerializable
      * @link http://php.net/manual/en/function.debug-backtrace.php
      * @link https://github.com/philkra/elastic-apm-php-agent/issues/55
      *
-     * @param int $limit
+     * @param $limit
      */
-    public function setBacktraceLimit(int $limit)
-    {
+    public function setBacktraceLimit($limit) {
         $this->backtraceLimit = $limit;
     }
 
@@ -133,8 +126,7 @@ class Transaction extends TraceableEvent implements \JsonSerializable
      *
      * @return array
      */
-    public function jsonSerialize() : array
-    {
+    public function jsonSerialize() {
         return [
             'transaction' => [
                 'trace_id'   => $this->getTraceId(),

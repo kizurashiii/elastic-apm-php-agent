@@ -10,17 +10,15 @@ use PhilKra\Helper\DistributedTracing;
  * Traceable Event -- Distributed Tracing
  *
  */
-class TraceableEvent extends EventBean
-{
+class TraceableEvent extends EventBean {
 
     /**
     * Create the Transaction
     *
-    * @param string $name
+    * @param $name
     * @param array $contexts
     */
-    public function __construct(array $contexts)
-    {
+    public function __construct(array $contexts) {
         parent::__construct($contexts);
         $this->setTraceContext();
     }
@@ -30,8 +28,7 @@ class TraceableEvent extends EventBean
      *
      * @return string
      */
-    public function getDistributedTracing() : string
-    {
+    public function getDistributedTracing() {
         return (new DistributedTracing($this->getTraceId(), $this->getParentId()))->__toString();
     }
 
@@ -40,10 +37,9 @@ class TraceableEvent extends EventBean
      *
      * @throws \Exception
      */
-    private function setTraceContext()
-    {
+    private function setTraceContext(){
         // Is one of the Traceparent Headers populated ?
-        $header = $_SERVER['HTTP_ELASTIC_APM_TRACEPARENT'] ?? ($_SERVER['HTTP_TRACEPARENT'] ?? null);
+        $header = isset($_SERVER['HTTP_ELASTIC_APM_TRACEPARENT']) ? $_SERVER['HTTP_ELASTIC_APM_TRACEPARENT'] : (isset($_SERVER['HTTP_TRACEPARENT']) ? $_SERVER['HTTP_TRACEPARENT'] : null);
         if ($header !== null && DistributedTracing::isValidHeader($header) === true) {
             try {
                 $traceParent = DistributedTracing::createFromHeader($header);

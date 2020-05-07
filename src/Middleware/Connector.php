@@ -34,8 +34,7 @@ class Connector
     /**
      * @param \PhilKra\Helper\Config $config
      */
-    public function __construct(\PhilKra\Helper\Config $config)
-    {
+    public function __construct(\PhilKra\Helper\Config $config) {
         $this->config = $config;
         $this->configureHttpClient();
     }
@@ -45,8 +44,7 @@ class Connector
      *
      * @return bool
      */
-    public function isPayloadSet() : bool
-    {
+    public function isPayloadSet() {
         return (empty($this->payload) === false);
     }
 
@@ -55,13 +53,12 @@ class Connector
      *
      * @return void
      */
-    private function configureHttpClient()
-    {
+    private function configureHttpClient() {
         $httpClientDefaults = [
             'timeout' => $this->config->get('timeout'),
         ];
 
-        $httpClientConfig = $this->config->get('httpClient') ?? [];
+        $httpClientConfig = $this->config->get('httpClient')?:[];
 
         $this->client = new Client(array_merge($httpClientDefaults, $httpClientConfig));
     }
@@ -69,8 +66,7 @@ class Connector
     /**
      * Put Events to the Payload Queue
      */
-    public function putEvent(EventBean $event)
-    {
+    public function putEvent(EventBean $event) {
         $this->payload[] = json_encode($event);
     }
 
@@ -79,8 +75,7 @@ class Connector
      *
      * @return bool
      */
-    public function commit() : bool
-    {
+    public function commit() {
         $body = '';
         foreach($this->payload as $line) {
             $body .= $line . "\n";
@@ -93,15 +88,15 @@ class Connector
         return ($response->getStatusCode() >= 200 && $response->getStatusCode() < 300);
     }
 
+
     /**
      * Get the Server Informations
      *
      * @link https://www.elastic.co/guide/en/apm/server/7.3/server-info.html
      *
-     * @return Response
+     * @return \Psr\Http\Message\ResponseInterface
      */
-    public function getInfo() : \GuzzleHttp\Psr7\Response
-    {
+    public function getInfo() {
         return $this->client->get(
             $this->config->get('serverUrl'),
             ['headers' => $this->getRequestHeaders(),]
@@ -111,12 +106,11 @@ class Connector
     /**
      * Get the Endpoint URI of the APM Server
      *
-     * @param string $endpoint
+     * @param $endpoint
      *
      * @return string
      */
-    private function getEndpoint() : string
-    {
+    private function getEndpoint() {
         return sprintf('%s/intake/v2/events', $this->config->get('serverUrl'));
     }
 
@@ -125,8 +119,7 @@ class Connector
      *
      * @return array
      */
-    private function getRequestHeaders() : array
-    {
+    private function getRequestHeaders() {
         // Default Headers Set
         $headers = [
             'Content-Type'     => 'application/x-ndjson',

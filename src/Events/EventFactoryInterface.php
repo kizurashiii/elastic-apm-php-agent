@@ -2,27 +2,26 @@
 
 namespace PhilKra\Events;
 
-interface EventFactoryInterface
-{
+interface EventFactoryInterface {
     /**
      * Creates a new error.
      *
-     * @param \Throwable $throwable
+     * @param \Exception $throwable
      * @param array      $contexts
      *
      * @return Error
      */
-    public function newError(\Throwable $throwable, array $contexts, ?Transaction $parent = null): Error;
+    public function newError(\Exception $throwable, array $contexts, Transaction $parent = null);
 
     /**
      * Creates a new transaction
      *
-     * @param string $name
+     * @param $name
      * @param array  $contexts
      *
      * @return Transaction
      */
-    public function newTransaction(string $name, array $contexts, float $start = null): Transaction;
+    public function newTransaction($name, array $contexts, $start = null);
 
     /**
      * Creates a new Span
@@ -32,7 +31,7 @@ interface EventFactoryInterface
      *
      * @return Span
      */
-    public function newSpan(string $name, EventBean $parent): Span;
+    public function newSpan($name, EventBean $parent);
 
     /**
      * Creates a new Metricset
@@ -45,6 +44,6 @@ interface EventFactoryInterface
      *
      * @return Metricset
      */
-    public function newMetricset(array $set, array $tags = []): Metricset;
+    public function newMetricset(array $set, array $tags = []);
 
 }

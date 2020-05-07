@@ -9,8 +9,7 @@ use PhilKra\Exception\MissingAppNameException;
  * Agent Config Store
  *
  */
-class Config
-{
+class Config {
     /**
      * Config Set
      *
@@ -21,8 +20,7 @@ class Config
     /**
      * @param array $config
      */
-    public function __construct(array $config)
-    {
+    public function __construct(array $config) {
         if (isset($config['appName']) === false) {
             throw new MissingAppNameException();
         }
@@ -35,14 +33,13 @@ class Config
     /**
      * Get Config Value
      *
-     * @param string $key
+     * @param $key
      * @param mixed $default
      *
      * @return mixed: value | null
      */
-    public function get(string $key, $default = null)
-    {
-        return ($this->config[$key]) ?? $default;
+    public function get($key, $default = null) {
+        return isset($this->config[$key])?$this->config[$key]:$default;
     }
 
     /**
@@ -50,8 +47,7 @@ class Config
      *
      * @return array
      */
-    public function asArray() : array
-    {
+    public function asArray() {
         return $this->config;
     }
 
@@ -62,8 +58,7 @@ class Config
      *
      * @return array
      */
-    private function getDefaultConfig() : array
-    {
+    private function getDefaultConfig() {
         return [
             'serverUrl'      => 'http://127.0.0.1:8200',
             'secretToken'    => null,

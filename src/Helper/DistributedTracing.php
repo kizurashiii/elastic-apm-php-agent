@@ -4,8 +4,7 @@ namespace PhilKra\Helper;
 
 use PhilKra\Exception\InvalidTraceContextHeaderException;
 
-class DistributedTracing
-{
+class DistributedTracing {
 
     /**
      * Supporting Elastic's Traceparent Header until W3C goes GA
@@ -35,12 +34,11 @@ class DistributedTracing
     private $traceFlags;
 
     /**
-     * @param string $traceId
-     * @param string $parentId
-     * @param string $traceFlags
+     * @param $traceId
+     * @param $parentId
+     * @param $traceFlags
      */
-    public function __construct(string $traceId, string $parentId, string $traceFlags = '00')
-    {
+    public function __construct( $traceId,  $parentId,  $traceFlags = '00') {
         $this->traceId = $traceId;
         $this->parentId = $parentId;
         $this->traceFlags = $traceFlags;
@@ -49,32 +47,28 @@ class DistributedTracing
     /**
      * @return string
      */
-    public function getTraceId()
-    {
+    public function getTraceId() {
         return $this->traceId;
     }
 
     /**
      * @return string
      */
-    public function getParentId()
-    {
+    public function getParentId() {
         return $this->parentId;
     }
 
     /**
      * @return string
      */
-    public function getTraceFlags() : string
-    {
+    public function getTraceFlags() {
         return $this->traceFlags;
     }
 
     /**
-     * @param string $traceFlags
+     * @param $traceFlags
      */
-    public function setTraceFlags(string $traceFlags)
-    {
+    public function setTraceFlags($traceFlags) {
         $this->traceFlags = $traceFlags;
     }
 
@@ -83,22 +77,20 @@ class DistributedTracing
      *
      * @link https://www.w3.org/TR/trace-context/#version-format
      *
-     * @param string $header
+     * @param $header
      *
      * @return bool
      */
-    public static function isValidHeader(string $header) : bool
-    {
+    public static function isValidHeader($header) {
         return preg_match('/^'.self::VERSION.'-[\da-f]{32}-[\da-f]{16}-[\da-f]{2}$/', $header) === 1;
     }
 
     /**
-     * @param string $header
-     * @return TraceParent
+     * @param $header
+     * @return DistributedTracing
      * @throws InvalidTraceContextHeaderException
      */
-    public static function createFromHeader(string $header)
-    {
+    public static function createFromHeader($header){
         if (!self::isValidHeader($header)) {
             throw new InvalidTraceContextHeaderException("InvalidTraceContextHeaderException");
         }
@@ -111,8 +103,7 @@ class DistributedTracing
      *
      * @return string
      */
-    public function __toString()
-    {
+    public function __toString() {
         return sprintf(
             '%s-%s-%s-%s',
             self::VERSION,

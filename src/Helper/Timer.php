@@ -9,8 +9,7 @@ use PhilKra\Exception\Timer\NotStoppedException;
 /**
  * Timer for Duration tracing
  */
-class Timer
-{
+class Timer {
     /**
      * Starting Timestamp
      *
@@ -25,8 +24,7 @@ class Timer
      */
     private $stoppedOn = null;
 
-    public function __construct(float $startTime = null)
-    {
+    public function __construct($startTime = null) {
         $this->startedOn = $startTime;
     }
 
@@ -36,8 +34,7 @@ class Timer
      * @return void
      * @throws AlreadyRunningException
      */
-    public function start()
-    {
+    public function start() {
         if (null !== $this->startedOn) {
             throw new AlreadyRunningException();
         }
@@ -52,8 +49,7 @@ class Timer
      *
      * @return void
      */
-    public function stop()
-    {
+    public function stop() {
         if ($this->startedOn === null) {
             throw new NotStartedException();
         }
@@ -68,8 +64,7 @@ class Timer
      *
      * @return float
      */
-    public function getDuration() : float
-    {
+    public function getDuration() {
         if ($this->stoppedOn === null) {
             throw new NotStoppedException();
         }
@@ -84,8 +79,7 @@ class Timer
      *
      * @return float
      */
-    public function getDurationInMilliseconds() : float
-    {
+    public function getDurationInMilliseconds() {
         if ($this->stoppedOn === null) {
             throw new NotStoppedException();
         }
@@ -100,8 +94,7 @@ class Timer
      *
      * @return float
      */
-    public function getElapsed() : float
-    {
+    public function getElapsed() {
         if ($this->startedOn === null) {
             throw new NotStartedException();
         }
@@ -118,8 +111,7 @@ class Timer
      *
      * @return float
      */
-    public function getElapsedInMilliseconds() : float
-    {
+    public function getElapsedInMilliseconds() {
         if ($this->startedOn === null) {
             throw new NotStartedException();
         }
@@ -132,24 +124,22 @@ class Timer
     /**
      * Convert the Duration from Seconds to Micro-Seconds
      *
-     * @param  float $num
+     * @param  $num
      *
      * @return float
      */
-    private function toMicro(float $num) : float
-    {
+    private function toMicro($num) {
         return $num * 1000000;
     }
 
     /**
      * Convert the Duration from Seconds to Milli-Seconds
      *
-     * @param  float $num
+     * @param  $num
      *
      * @return float
      */
-    private function toMilli(float $num) : float
-    {
+    private function toMilli($num) {
         return $num * 1000;
     }
 }

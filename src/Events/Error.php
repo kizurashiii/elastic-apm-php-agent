@@ -12,8 +12,7 @@ use PhilKra\Traits\Events\Stacktrace;
  * @link https://www.elastic.co/guide/en/apm/server/6.2/errors.html
  *
  */
-class Error extends EventBean implements \JsonSerializable
-{
+class Error extends EventBean implements \JsonSerializable {
     use Stacktrace;
 
     /**
@@ -26,11 +25,10 @@ class Error extends EventBean implements \JsonSerializable
     private $throwable;
 
     /**
-     * @param Throwable $throwable
+     * @param \Exception $throwable
      * @param array $contexts
      */
-    public function __construct(\Throwable $throwable, array $contexts, ?Transaction $transaction = null)
-    {
+    public function __construct(\Exception $throwable, array $contexts, Transaction $transaction = null) {
         parent::__construct($contexts, $transaction);
         $this->throwable = $throwable;
     }
@@ -40,8 +38,7 @@ class Error extends EventBean implements \JsonSerializable
      *
      * @return array
      */
-    public function jsonSerialize() : array
-    {
+    public function jsonSerialize() {
         return [
             'error' => [
                 'id'             => $this->getId(),

@@ -8,7 +8,6 @@
 
 namespace PhilKra\Exception;
 
-class InvalidTraceContextHeaderException extends \Exception
-{
+class InvalidTraceContextHeaderException extends \Exception {
 
 }
