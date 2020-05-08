@@ -44,42 +44,42 @@ class Agent
      *
      * @var \PhilKra\Helper\Config
      */
-    private $config;
+    protected $config;
 
     /**
      * Transactions Store
      *
      * @var \PhilKra\Stores\TransactionsStore
      */
-    private $transactionsStore;
+    protected $transactionsStore;
 
     /**
      * Apm Timer
      *
      * @var \PhilKra\Helper\Timer
      */
-    private $timer;
+    protected $timer;
 
     /**
      * Common/Shared Contexts for Errors and Transactions
      *
      * @var array
      */
-    private $sharedContext = [
-      'user'   => [],
-      'custom' => [],
-      'tags'   => []
+    protected $sharedContext = [
+        'user'   => [],
+        'custom' => [],
+        'tags'   => []
     ];
 
     /**
      * @var EventFactoryInterface
      */
-    private $eventFactory;
+    protected $eventFactory;
 
     /**
      * @var Connector
      */
-    private $connector;
+    protected $connector;
 
     /**
      * Setup the APM Agent
@@ -90,7 +90,7 @@ class Agent
      *
      * @return void
      */
-    public function __construct(array $config, array $sharedContext = [], EventFactoryInterface $eventFactory = null, TransactionsStore $transactionsStore = null)
+    public function __construct(array $config, array $sharedContext = [], $connector = null, EventFactoryInterface $eventFactory = null, TransactionsStore $transactionsStore = null)
     {
         // Init Agent Config
         $this->config = new Config($config);
@@ -114,7 +114,7 @@ class Agent
         $this->transactionsStore = $transactionsStore ?: new TransactionsStore();
 
         // Init the Transport "Layer"
-        $this->connector = new Connector($this->config);
+        $this->connector = $connector ?: new Connector( $this->config );
         $this->connector->putEvent(new Metadata([], $this->config));
 
         // Start Global Agent Timer

@@ -63,13 +63,12 @@ class Error extends EventBean implements \JsonSerializable {
      *
      * @return array
      */
-    final private function mapStacktrace() : array
-    {
+    final private function mapStacktrace() {
         $stacktrace = [];
 
         foreach ($this->throwable->getTrace() as $trace) {
             $item = [
-              'function' => $trace['function'] ?? '(closure)'
+              'function' => isset($trace['function']) ? $trace['function'] : '(closure)'
             ];
 
             if (isset($trace['line']) === true) {

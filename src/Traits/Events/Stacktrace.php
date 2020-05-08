@@ -15,7 +15,7 @@ trait Stacktrace {
      * @param $limit, Def: 0 (unlimited)
      */
     public function setDebugBacktrace($limit = 0) {
-        parent::setStackTrace($this->getDebugBacktrace($limit));
+        $this->setStackTrace($this->getDebugBacktrace($limit));
     }
 
     /**
@@ -34,13 +34,11 @@ trait Stacktrace {
                     'filename' => basename($traces[$it]['file']),
                     'function' => (isset($traces[$it]['function']) ? $traces[$it]['function'] : null),
                     'lineno'   => (isset($traces[$it]['line']) ? $traces[$it]['line'] : null),
-                    'module'   => (isset($traces[$it]['class']) ? $traces[$it]['class'] : null),
-                    'vars'     => (isset($traces[$it]['args']) ? $traces[$it]['args'] : null),
+                    'module'   => (isset($traces[$it]['class']) ? addslashes( $traces[$it]['class'] ) : null),
+                    'vars'     => null,
                 ];
             }
         }
-
         return $backtrace;
     }
-
 }

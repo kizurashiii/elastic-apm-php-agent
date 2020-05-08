@@ -19,17 +19,17 @@ class Connector
      *
      * @var \PhilKra\Helper\Config
      */
-    private $config;
+    protected $config;
 
     /**
      * @var \GuzzleHttp\Client
      */
-    private $client;
+    protected $client;
 
     /**
      * @var array
      */
-    private $payload = [];
+    protected $payload = [];
 
     /**
      * @param \PhilKra\Helper\Config $config
@@ -53,7 +53,7 @@ class Connector
      *
      * @return void
      */
-    private function configureHttpClient() {
+    protected function configureHttpClient() {
         $httpClientDefaults = [
             'timeout' => $this->config->get('timeout'),
         ];
@@ -80,6 +80,7 @@ class Connector
         foreach($this->payload as $line) {
             $body .= $line . "\n";
         }
+
         $this->payload = [];
         $response = $this->client->post($this->getEndpoint(), [
             'headers' => $this->getRequestHeaders(),
@@ -88,6 +89,24 @@ class Connector
         return ($response->getStatusCode() >= 200 && $response->getStatusCode() < 300);
     }
 
+    /**
+     * Get the Payload
+     *
+     *
+     * @return Arrays
+     */
+    public function getPayload() {
+        return $this->payload;
+    }
+
+    /**
+     * Set the Payload
+     *
+     *
+     */
+    public function setPayload( $payload = array() ) {
+        $this->payload = $payload;
+    }
 
     /**
      * Get the Server Informations
@@ -110,7 +129,7 @@ class Connector
      *
      * @return string
      */
-    private function getEndpoint() {
+    protected function getEndpoint() {
         return sprintf('%s/intake/v2/events', $this->config->get('serverUrl'));
     }
 
@@ -119,7 +138,7 @@ class Connector
      *
      * @return array
      */
-    private function getRequestHeaders() {
+    protected function getRequestHeaders() {
         // Default Headers Set
         $headers = [
             'Content-Type'     => 'application/x-ndjson',

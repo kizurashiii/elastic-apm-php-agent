@@ -13,11 +13,11 @@ use PhilKra\Helper\DistributedTracing;
 class TraceableEvent extends EventBean {
 
     /**
-    * Create the Transaction
-    *
-    * @param $name
-    * @param array $contexts
-    */
+     * Create the Transaction
+     *
+     * @param $name
+     * @param array $contexts
+     */
     public function __construct(array $contexts) {
         parent::__construct($contexts);
         $this->setTraceContext();

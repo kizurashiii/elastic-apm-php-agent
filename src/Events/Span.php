@@ -42,6 +42,11 @@ class Span extends TraceableEvent implements \JsonSerializable {
     private $type = 'request';
 
     /**
+     * @var string
+     */
+    private $subtype = 'request';
+
+    /**
      * @var mixed array|null
      */
     private $stacktrace = [];
@@ -106,6 +111,15 @@ class Span extends TraceableEvent implements \JsonSerializable {
     }
 
     /**
+     * Set the Spans' Action
+     *
+     * @param $subtype
+     */
+    public function setSubtype($subtype) {
+        $this->subtype = trim($subtype);
+    }
+
+    /**
      * Set a complimentary Stacktrace for the Span
      *
      * @link https://www.elastic.co/guide/en/apm/server/master/span-api.html
@@ -131,6 +145,7 @@ class Span extends TraceableEvent implements \JsonSerializable {
                 'trace_id'       => $this->getTraceId(),
                 'parent_id'      => $this->getParentId(),
                 'type'           => Encoding::keywordField($this->type),
+                'subtype'        => Encoding::keywordField($this->subtype),
                 'action'         => Encoding::keywordField($this->action),
                 'context'        => $this->getContext(),
                 'duration'       => $this->duration,

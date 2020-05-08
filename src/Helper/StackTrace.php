@@ -17,16 +17,17 @@ class StackTrace {
      */
     public static function convertBacktraceToStackFrames(array $backtrace) {
         $return_value = array();
-        foreach ($backtrace as $single_backtrace) {
-            $return_value[] = [
+        foreach ($backtrace as $index => $single_backtrace) {
+            $return_value = [
                 'abs_path' => $single_backtrace['file'],
                 'filename' => basename($single_backtrace['file']),
-                'function' => (isset($single_backtrace['function']) ? $single_backtrace['function'] : null),
+                'function' => (isset($single_backtrace['function'])  ? $single_backtrace['function'] : null),
                 'lineno'   => (isset($single_backtrace['line']) ? $single_backtrace['line'] : null),
-                'module'   => (isset($single_backtrace['class']) ? $single_backtrace['class'] : null),
-                'vars'     => (isset($single_backtrace['args']) ? $single_backtrace['args'] : null),
+                'module'   => (isset($single_backtrace['class'])? addslashes( $single_backtrace['class'] ) : null),
+                'vars'     => null,
             ];
         }
+
         return $return_value;
     }
 }

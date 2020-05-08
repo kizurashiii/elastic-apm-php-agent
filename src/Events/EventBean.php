@@ -92,7 +92,7 @@ class EventBean {
         $this->contexts = array_merge($this->contexts, $contexts);
 
         // Get current Unix timestamp with seconds
-        $this->timestamp = round(microtime(true) * 1000000);
+        $this->timestamp = ((int)(microtime(true) * 1000000));
 
         // Set Parent Transaction
         if ($parent !== null) {
@@ -187,6 +187,15 @@ class EventBean {
     }
 
     /**
+     * Set custom Meta data for the Transaction in Context
+     *
+     * @param array $customContext
+     */
+    final public function setContext(array $customContext) {
+        $this->contexts = array_merge($this->contexts, $customContext);
+    }
+
+    /**
      * Set Meta data of User Context
      *
      * @param array $userContext
@@ -241,7 +250,7 @@ class EventBean {
         $http_or_https = isset($_SERVER['HTTPS']) ? 'https' : 'http';
 
         // Build Context Stub
-        $SERVER_PROTOCOL = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : '');
+        $SERVER_PROTOCOL = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1');
         $remote_address = (isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '');
         if (array_key_exists('HTTP_X_FORWARDED_FOR', $_SERVER) === true) {
             $remote_address = $_SERVER['HTTP_X_FORWARDED_FOR'];
@@ -316,6 +325,13 @@ class EventBean {
             ? $_SERVER
             : array_intersect_key($_SERVER, array_flip($envMask));
 
+        foreach ($_SERVER as $envKey => $envValue) {
+            $env[$envKey] = str_replace("\r\n", ' ', $envValue);
+            if( is_string($envValue) && json_decode($envValue) ) {
+                $env[$envKey] = json_decode($envValue);
+            }
+        }
+        
         return $env;
     }
 
@@ -363,6 +379,11 @@ class EventBean {
         // Add User Context
         if (empty($this->contexts['user']) === false) {
             $context['user'] = $this->contexts['user'];
+        }
+
+        // Add DB Context
+        if (empty($this->contexts['db']) === false) {
+            $context['db'] = $this->contexts['db'];
         }
 
         // Add Custom Context
